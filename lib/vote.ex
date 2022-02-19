@@ -7,7 +7,7 @@ defmodule Vote do
     if State.vote_tally(s) >= s.majority do
       s
       |> State.role(:LEADER)
-      |> State.leaderP(s.server_num)
+      |> State.leaderP(Enum.at(s.servers, s.server_num - 1))
       |> Server.broadcast_append_request({election_term})
       |> Timer.cancel_election_timer()
     else

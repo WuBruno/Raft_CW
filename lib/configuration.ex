@@ -54,7 +54,7 @@ defmodule Configuration do
       # clients stops sending requests after this time(ms)
       client_timelimit: 60_000,
       # maximum no of requests each client will attempt
-      max_client_requests: 1,
+      max_client_requests: 2,
       # interval(ms) between client requests
       client_request_interval: 5,
       # timeout(ms) for the reply to a client request
@@ -66,10 +66,11 @@ defmodule Configuration do
       # interval(ms) between monitor summaries
       monitor_interval: 500,
       # server_num => crash_after_time (ms), ..
-      crash_servers: %{
-        3 => 3_000,
-        4 => 5_000
-      }
+      crash_servers:
+        %{
+          # 3 => 3_000,
+          # 4 => 5_000
+        }
     }
   end
 

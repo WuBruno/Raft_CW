@@ -70,7 +70,7 @@ defmodule Server do
               |> State.curr_term(term)
               |> State.voted_for(nil)
               |> State.role(:FOLLOWER)
-              |> State.leaderP(leader)
+              |> State.leaderP(Enum.at(s.servers, leader - 1))
             else
               s
             end
@@ -79,7 +79,7 @@ defmodule Server do
             if(term == s.curr_term and s.role == :CANDIDATE) do
               s
               |> State.role(:FOLLOWER)
-              |> State.leaderP(leader)
+              |> State.leaderP(Enum.at(s.servers, leader - 1))
             else
               s
             end
@@ -87,6 +87,7 @@ defmodule Server do
           if term == s.curr_term do
             s
             |> Server.send(leader, :APPEND_ENTRIES_REPLY, {s.curr_term, true})
+            |> State.leaderP(Enum.at(s.servers, leader - 1))
             |> Timer.restart_election_timer()
             |> Debug.message("+arep", {leader, :APPEND_ENTRIES_REPLY, {s.curr_term, true}})
           else
@@ -181,8 +182,31 @@ defmodule Server do
             s
           end
 
-        {:CLIENT_REQUEST, _msg} ->
+        {:CLIENT_REQUEST, %{clientP: clientP, cid: cid, cmd: _cmd}} = m ->
           # omitted
+          s |> Debug.message("-creq", m)
+
+          if s.role != :LEADER and s.leaderP != nil do
+            send(clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}})
+
+            Debug.message(
+              s,
+              "+crep",
+              {clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}}}
+            )
+          end
+
+          if s.role == :LEADER do
+            send(clientP, {:CLIENT_REPLY, {cid, :SUCCESS, s.leaderP}})
+            Monitor.send_msg(s, {:CLIENT_REQUEST, s.server_num})
+
+            Debug.message(
+              s,
+              "+crep",
+              {clientP, {:CLIENT_REPLY, {cid, :SUCCESS, s.leaderP}}}
+            )
+          end
+
           s
 
         {:CRASH} ->
