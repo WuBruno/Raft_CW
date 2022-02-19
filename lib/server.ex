@@ -29,6 +29,17 @@ defmodule Server do
     s
   end
 
+  def commit_database(s, client_request) do
+    send(s.databaseP, {:DB_REQUEST, client_request})
+    Debug.message(s, "+dreq", {:DB_REQUEST, client_request})
+
+    # Return reply
+    receive do
+      {:DB_REPLY, db_result} ->
+        db_result
+    end
+  end
+
   def send_append_request(s, follower) do
     payload = {s.curr_term}
 
@@ -182,7 +193,7 @@ defmodule Server do
             s
           end
 
-        {:CLIENT_REQUEST, %{clientP: clientP, cid: cid, cmd: _cmd}} = m ->
+        {:CLIENT_REQUEST, %{clientP: clientP, cid: cid, cmd: _cmd} = request} = m ->
           # omitted
           s |> Debug.message("-creq", m)
 
@@ -197,13 +208,14 @@ defmodule Server do
           end
 
           if s.role == :LEADER do
-            send(clientP, {:CLIENT_REPLY, {cid, :SUCCESS, s.leaderP}})
+            result = commit_database(s, request)
+            send(clientP, {:CLIENT_REPLY, {cid, result, s.leaderP}})
             Monitor.send_msg(s, {:CLIENT_REQUEST, s.server_num})
 
             Debug.message(
               s,
               "+crep",
-              {clientP, {:CLIENT_REPLY, {cid, :SUCCESS, s.leaderP}}}
+              {clientP, {:CLIENT_REPLY, {cid, result, s.leaderP}}}
             )
           end
 

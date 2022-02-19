@@ -1,150 +1,119 @@
 mix compile
-Compiling 1 file (.ex)
+Compiling 2 files (.ex)
 -------------------------------------------------------------------
-%{}
   time = 500 client requests seen = []
   time = 500      db updates done = []
 
-server2-0001 role=FOLLOWER  term=001 +crep {#PID<18469.147.0>, {:CLIENT_REPLY, {{1, 1}, :NOT_LEADER, #PID<18327.147.0>}}}
-server2-0001 role=FOLLOWER  term=001 +crep {#PID<18471.147.0>, {:CLIENT_REPLY, {{2, 1}, :NOT_LEADER, #PID<18327.147.0>}}}
-server4-0001 role=LEADER    term=001 +crep {#PID<18504.147.0>, {:CLIENT_REPLY, {{1, 1}, :SUCCESS, #PID<0.147.0>}}}
-server4-0001 role=LEADER    term=001 +crep {#PID<18504.147.0>, {:CLIENT_REPLY, {{1, 2}, :SUCCESS, #PID<0.147.0>}}}
-Node client1_48_brunowu@127.0.0.1 Going to Sleep - Client 1 all requests completed = 2
-server4-0001 role=LEADER    term=001 +crep {#PID<18505.147.0>, {:CLIENT_REPLY, {{2, 1}, :SUCCESS, #PID<0.147.0>}}}
-server2-0001 role=FOLLOWER  term=001 +crep {#PID<18470.147.0>, {:CLIENT_REPLY, {{3, 1}, :NOT_LEADER, #PID<18327.147.0>}}}
-server4-0001 role=LEADER    term=001 +crep {#PID<18503.147.0>, {:CLIENT_REPLY, {{3, 1}, :SUCCESS, #PID<0.147.0>}}}
-server4-0001 role=LEADER    term=001 +crep {#PID<18505.147.0>, {:CLIENT_REPLY, {{2, 2}, :SUCCESS, #PID<0.147.0>}}}
-Node client2_48_brunowu@127.0.0.1 Going to Sleep - Client 2 all requests completed = 2
-server4-0001 role=LEADER    term=001 +crep {#PID<18503.147.0>, {:CLIENT_REPLY, {{3, 2}, :SUCCESS, #PID<0.147.0>}}}
-Node client3_48_brunowu@127.0.0.1 Going to Sleep - Client 3 all requests completed = 2
-%{4 => 6}
+server2-0001 role=FOLLOWER  term=001 +crep {#PID<18504.147.0>, {:CLIENT_REPLY, {{1, 1}, :NOT_LEADER, #PID<18328.147.0>}}}
+server4-0001 role=LEADER    term=001 +crep {#PID<18505.147.0>, {:CLIENT_REPLY, {{1, 1}, :OK, #PID<0.147.0>}}}
+server2-0001 role=FOLLOWER  term=001 +crep {#PID<18503.147.0>, {:CLIENT_REPLY, {{2, 1}, :NOT_LEADER, #PID<18328.147.0>}}}
+server4-0001 role=LEADER    term=001 +crep {#PID<18505.147.0>, {:CLIENT_REPLY, {{1, 2}, :OK, #PID<0.147.0>}}}
+Node client1_15_brunowu@127.0.0.1 Going to Sleep - Client 1 all requests completed = 2
+server2-0001 role=FOLLOWER  term=001 +crep {#PID<18469.147.0>, {:CLIENT_REPLY, {{3, 1}, :NOT_LEADER, #PID<18328.147.0>}}}
+server4-0001 role=LEADER    term=001 +crep {#PID<18504.147.0>, {:CLIENT_REPLY, {{2, 1}, :OK, #PID<0.147.0>}}}
+server4-0001 role=LEADER    term=001 +crep {#PID<18503.147.0>, {:CLIENT_REPLY, {{3, 1}, :OK, #PID<0.147.0>}}}
+server4-0001 role=LEADER    term=001 +crep {#PID<18504.147.0>, {:CLIENT_REPLY, {{2, 2}, :OK, #PID<0.147.0>}}}
+Node client2_15_brunowu@127.0.0.1 Going to Sleep - Client 2 all requests completed = 2
+server4-0001 role=LEADER    term=001 +crep {#PID<18503.147.0>, {:CLIENT_REPLY, {{3, 2}, :OK, #PID<0.147.0>}}}
+Node client3_15_brunowu@127.0.0.1 Going to Sleep - Client 3 all requests completed = 2
   time = 1000 client requests seen = [{4, 6}]
-  time = 1000      db updates done = []
+  time = 1000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 1500 client requests seen = [{4, 6}]
-  time = 1500      db updates done = []
+  time = 1500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 2000 client requests seen = [{4, 6}]
-  time = 2000      db updates done = []
+  time = 2000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 2500 client requests seen = [{4, 6}]
-  time = 2500      db updates done = []
+  time = 2500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 3000 client requests seen = [{4, 6}]
-  time = 3000      db updates done = []
+  time = 3000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 3500 client requests seen = [{4, 6}]
-  time = 3500      db updates done = []
+  time = 3500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 4000 client requests seen = [{4, 6}]
-  time = 4000      db updates done = []
+  time = 4000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 4500 client requests seen = [{4, 6}]
-  time = 4500      db updates done = []
+  time = 4500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 5000 client requests seen = [{4, 6}]
-  time = 5000      db updates done = []
+  time = 5000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 5500 client requests seen = [{4, 6}]
-  time = 5500      db updates done = []
+  time = 5500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 6000 client requests seen = [{4, 6}]
-  time = 6000      db updates done = []
+  time = 6000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 6500 client requests seen = [{4, 6}]
-  time = 6500      db updates done = []
+  time = 6500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 7000 client requests seen = [{4, 6}]
-  time = 7000      db updates done = []
+  time = 7000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 7500 client requests seen = [{4, 6}]
-  time = 7500      db updates done = []
+  time = 7500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 8000 client requests seen = [{4, 6}]
-  time = 8000      db updates done = []
+  time = 8000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 8500 client requests seen = [{4, 6}]
-  time = 8500      db updates done = []
+  time = 8500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 9000 client requests seen = [{4, 6}]
-  time = 9000      db updates done = []
+  time = 9000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 9500 client requests seen = [{4, 6}]
-  time = 9500      db updates done = []
+  time = 9500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 10000 client requests seen = [{4, 6}]
-  time = 10000      db updates done = []
+  time = 10000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 10500 client requests seen = [{4, 6}]
-  time = 10500      db updates done = []
+  time = 10500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 11000 client requests seen = [{4, 6}]
-  time = 11000      db updates done = []
+  time = 11000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 11500 client requests seen = [{4, 6}]
-  time = 11500      db updates done = []
+  time = 11500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 12000 client requests seen = [{4, 6}]
-  time = 12000      db updates done = []
+  time = 12000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 12500 client requests seen = [{4, 6}]
-  time = 12500      db updates done = []
+  time = 12500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 13000 client requests seen = [{4, 6}]
-  time = 13000      db updates done = []
+  time = 13000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 13500 client requests seen = [{4, 6}]
-  time = 13500      db updates done = []
+  time = 13500      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 14000 client requests seen = [{4, 6}]
-  time = 14000      db updates done = []
+  time = 14000      db updates done = [{4, 6}]
 
-  Node client1_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node server2_48_brunowu@127.0.0.1 exiting - maxtime reached
-%{4 => 6}
   time = 14500 client requests seen = [{4, 6}]
-  time = 14500      db updates done = []
+  time = 14500      db updates done = [{4, 6}]
 
-  Node client2_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node server4_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node server3_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node client5_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node client3_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node server5_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node client4_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node server1_48_brunowu@127.0.0.1 exiting - maxtime reached
-  Node raft_48_brunowu@127.0.0.1 exiting - maxtime reached
-%{4 => 6}
+  Node server4_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client2_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client3_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server5_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client1_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server1_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server3_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server2_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client4_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client5_15_brunowu@127.0.0.1 exiting - maxtime reached
+  Node raft_15_brunowu@127.0.0.1 exiting - maxtime reached
   time = 15000 client requests seen = [{4, 6}]
-  time = 15000      db updates done = []
+  time = 15000      db updates done = [{4, 6}]
 
-%{4 => 6}
   time = 15500 client requests seen = [{4, 6}]
-  time = 15500      db updates done = []
+  time = 15500      db updates done = [{4, 6}]
 
