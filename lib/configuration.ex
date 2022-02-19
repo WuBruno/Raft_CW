@@ -86,6 +86,14 @@ defmodule Configuration do
     )
   end
 
+  def setup_crash(s) do
+    if Map.has_key?(s.config.crash_servers, s.server_num) do
+      Process.send_after(self(), {:CRASH}, s.config.crash_servers[s.server_num])
+    end
+
+    s
+  end
+
   # params :slower
 end
 

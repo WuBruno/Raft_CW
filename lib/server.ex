@@ -15,19 +15,11 @@ defmodule Server do
       {:BIND, servers, databaseP} ->
         State.initialise(config, server_num, servers, databaseP)
         |> Timer.restart_election_timer()
-        |> Server.setup_crash()
+        |> Configuration.setup_crash()
         |> Server.next()
     end
 
     # receive
-  end
-
-  def setup_crash(s) do
-    if Map.has_key?(s.config.crash_servers, s.server_num) do
-      Process.send_after(self(), {:CRASH}, s.config.crash_servers[s.server_num])
-    end
-
-    s
   end
 
   # start
@@ -70,7 +62,6 @@ defmodule Server do
     s =
       receive do
         {:APPEND_ENTRIES_REQUEST, leader, {term}} = m ->
-          # omitted
           Debug.message(s, "-areq", m)
 
           s =
@@ -168,9 +159,9 @@ defmodule Server do
               s
           end
 
-        {:ELECTION_TIMEOUT, {curr_term, _curr_election}} ->
+        {:ELECTION_TIMEOUT, {curr_term, _curr_election}} = m ->
           # Don't accept timeouts from past terms
-          Debug.message(s, "-etim", "")
+          Debug.message(s, "-etim", m)
 
           if curr_term < s.curr_term do
             s
@@ -180,7 +171,9 @@ defmodule Server do
 
         # Configure state
 
-        {:APPEND_ENTRIES_TIMEOUT, {term, follower}} ->
+        {:APPEND_ENTRIES_TIMEOUT, {term, follower}} = m ->
+          Debug.message(s, "-atim", m)
+
           if term == s.curr_term do
             # Send heartbeat
             s |> Server.send_append_request(follower)

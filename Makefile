@@ -13,7 +13,7 @@ SETUP     = default	# one of default, slower, faster, etc
 # Prefixes + for send/send_after,  - for receive
 # DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
 # DEBUG_OPTIONS = "+vreq -vreq +vall +vrep -vrep +arep -arep"
-DEBUG_OPTIONS = "!inf +vall -areq -etim"
+DEBUG_OPTIONS = "!inf +vall -atim"
 # DEBUG_OPTIONS = "none"
 
 DEBUG_LEVEL   = 3
