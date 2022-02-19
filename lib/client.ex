@@ -66,7 +66,10 @@ defmodule Client do
 
         c =
           c
-          |> Client.request({:CLIENT_REQUEST, %{clientP: c.clientP, cid: cid, cmd: cmd}})
+          |> Client.request({
+            :CLIENT_REQUEST,
+            %{clientP: c.clientP, cid: cid, cmd: cmd}
+          })
           |> Client.send_client_request_receive_reply(cid)
 
         Client.next(c)

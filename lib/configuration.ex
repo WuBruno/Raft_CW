@@ -67,8 +67,8 @@ defmodule Configuration do
       monitor_interval: 500,
       # server_num => crash_after_time (ms), ..
       crash_servers: %{
-        3 => 10_000,
-        4 => 15_000
+        3 => 3_000,
+        4 => 5_000
       }
     }
   end
