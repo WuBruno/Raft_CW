@@ -50,7 +50,7 @@ defmodule State do
       # index of highest committed entry in server's log
       commit_index: 0,
       # index of last entry applied to state machine of server
-      last_applied: 0,
+      # last_applied: 0,
       # foreach follower, index of follower's last known entry+1
       next_index: Map.new(),
       # index of highest entry known to be replicated at a follower
@@ -84,10 +84,14 @@ defmodule State do
 
   def role(s, v), do: Map.put(s, :role, v)
   def commit_index(s, v), do: Map.put(s, :commit_index, v)
-  def last_applied(s, v), do: Map.put(s, :last_applied, v)
+  # def last_applied(s, v), do: Map.put(s, :last_applied, v)
 
   def next_index(s, v), do: Map.put(s, :next_index, v)
   def next_index(s, i, v), do: Map.put(s, :next_index, Map.put(s.next_index, i, v))
+
+  def dec_next_index(s, i),
+    do: Map.put(s, :next_index, Map.put(s.next_index, i, s.next_index[i] - 1))
+
   def match_index(s, v), do: Map.put(s, :match_index, v)
   def match_index(s, i, v), do: Map.put(s, :match_index, Map.put(s.match_index, i, v))
 
@@ -95,7 +99,7 @@ defmodule State do
     v = Log.last_index(s) + 1
 
     new_next_index =
-      for server <- s.servers, into: Map.new() do
+      for server <- 1..s.num_servers, into: Map.new() do
         {server, v}
       end
 
@@ -106,7 +110,7 @@ defmodule State do
 
   def init_match_index(s) do
     new_match_index =
-      for server <- s.servers, into: Map.new() do
+      for server <- 1..s.num_servers, into: Map.new() do
         {server, 0}
       end
 

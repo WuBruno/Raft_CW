@@ -41,7 +41,16 @@ defmodule Server do
   end
 
   def send_append_request(s, follower) do
-    payload = {s.curr_term}
+    i = s.next_index[follower]
+
+    entries =
+      if i < Log.last_index(s),
+        do: Log.get_entries(s, (i + 1)..Log.last_index(s)),
+        else: %{}
+
+    prev_log_term = if i > 0, do: Log.last_term(s), else: 0
+
+    payload = {s.curr_term, i, prev_log_term, s.commit_index, entries}
 
     s
     |> Server.send(follower, :APPEND_ENTRIES_REQUEST, payload)
@@ -57,169 +66,79 @@ defmodule Server do
     s
   end
 
-  def broadcast_append_request(s, payload) do
+  def broadcast_append_request(s) do
     for i <- 1..s.num_servers,
         i != s.server_num,
         do:
           s
-          |> Server.send(i, :APPEND_ENTRIES_REQUEST, payload)
+          |> Server.send_append_request(i)
           |> Timer.restart_append_entries_timer(i)
 
-    s |> Debug.message("+vall", {:APPEND_ENTRIES_REQUEST, payload})
+    s
   end
 
   # _________________________________________________________ next()
   def next(s) do
     s =
       receive do
-        {:APPEND_ENTRIES_REQUEST, leader, {term}} = m ->
+        {:APPEND_ENTRIES_REQUEST, leader, payload} = m ->
           Debug.message(s, "-areq", m)
+          s |> AppendEntries.handle_append_entries_request(leader, payload)
 
-          s =
-            if term > s.curr_term do
-              s
-              |> State.curr_term(term)
-              |> State.voted_for(nil)
-              |> State.role(:FOLLOWER)
-              |> State.leaderP(Enum.at(s.servers, leader - 1))
-            else
-              s
-            end
-
-          s =
-            if(term == s.curr_term and s.role == :CANDIDATE) do
-              s
-              |> State.role(:FOLLOWER)
-              |> State.leaderP(Enum.at(s.servers, leader - 1))
-            else
-              s
-            end
-
-          if term == s.curr_term do
-            s
-            |> Server.send(leader, :APPEND_ENTRIES_REPLY, {s.curr_term, true})
-            |> State.leaderP(Enum.at(s.servers, leader - 1))
-            |> Timer.restart_election_timer()
-            |> Debug.message("+arep", {leader, :APPEND_ENTRIES_REPLY, {s.curr_term, true}})
-          else
-            s
-            |> Server.send(leader, :APPEND_ENTRIES_REPLY, {s.curr_term, false})
-            |> Debug.message("+arep", {leader, :APPEND_ENTRIES_REPLY, {s.curr_term, false}})
-          end
-
-        {:APPEND_ENTRIES_REPLY, _follower, {term, _success}} = m ->
+        {:APPEND_ENTRIES_REPLY, follower, payload} = m ->
           Debug.message(s, "-arep", m)
+          s |> AppendEntries.handle_append_entries_reply(follower, payload)
 
-          cond do
-            term == s.curr_term and s.role == :LEADER ->
-              s
-
-            term > s.curr_term ->
-              s
-              |> State.curr_term(term)
-              |> State.role(:FOLLOWER)
-              |> State.voted_for(nil)
-
-            true ->
-              s
-          end
-
-        {:VOTE_REQUEST, sender, {election_term}} = m ->
+        {:VOTE_REQUEST, candidate, payload} = m ->
           Debug.message(s, "-vreq", m)
+          s |> Vote.handle_vote_request(candidate, payload)
 
-          valid_term =
-            election_term > s.curr_term or
-              (s.curr_term == election_term and s.voted_for in [sender, nil])
-
-          if valid_term do
-            # Accept vote
-            s
-            |> State.curr_term(election_term)
-            |> State.role(:FOLLOWER)
-            |> State.voted_for(sender)
-            |> Server.send(sender, :VOTE_REPLY, {election_term, :ACCEPT})
-            |> Debug.message("+vrep", {s.server_num, election_term, :ACCEPT})
-            |> Timer.restart_election_timer()
-
-            # |> State.curr_election(election_term)
-          else
-            # Reject vote
-            s
-            |> Server.send(sender, :VOTE_REPLY, {s.curr_term, :REJECT})
-            |> Debug.message("+vrep", {s.curr_term, :REJECT})
-          end
-
-        {:VOTE_REPLY, sender, {election_term, response}} = m ->
+        {:VOTE_REPLY, voter, payload} = m ->
           Debug.message(s, "-vrep", m)
-
-          cond do
-            s.role == :CANDIDATE and
-              election_term == s.curr_term and
-                response == :ACCEPT ->
-              s
-              |> State.add_to_voted_by(sender)
-              |> Vote.verify_won_election(election_term)
-
-            election_term > s.curr_term ->
-              s
-              |> State.curr_term(election_term)
-              |> State.role(:FOLLOWER)
-              |> State.voted_for(nil)
-              |> Timer.cancel_election_timer()
-
-            true ->
-              s
-          end
+          s |> Vote.handle_vote_reply(voter, payload)
 
         {:ELECTION_TIMEOUT, {curr_term, _curr_election}} = m ->
           # Don't accept timeouts from past terms
           Debug.message(s, "-etim", m)
 
-          if curr_term < s.curr_term do
-            s
-          else
-            s |> Vote.start_election()
-          end
+          if curr_term < s.curr_term,
+            do: s,
+            else: s |> Vote.start_election()
 
         # Configure state
 
         {:APPEND_ENTRIES_TIMEOUT, {term, follower}} = m ->
           Debug.message(s, "-atim", m)
 
-          if term == s.curr_term do
+          if term == s.curr_term,
             # Send heartbeat
-            s |> Server.send_append_request(follower)
-          else
-            s
-          end
+            do: s |> Server.send_append_request(follower),
+            else: s
 
-        {:CLIENT_REQUEST, %{clientP: clientP, cid: cid, cmd: _cmd} = request} = m ->
-          # omitted
+        {:CLIENT_REQUEST, %{clientP: clientP, cid: cid} = request} = m ->
           s |> Debug.message("-creq", m)
 
-          if s.role != :LEADER and s.leaderP != nil do
-            send(clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}})
+          cond do
+            s.role != :LEADER and s.leaderP != nil ->
+              send(clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}})
 
-            Debug.message(
-              s,
-              "+crep",
-              {clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}}}
-            )
+              s
+              |> Debug.message(
+                "+crep",
+                {clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}}}
+              )
+
+            s.role == :LEADER ->
+              s = s |> Log.append_entry(%{term: s.curr_term, request: request})
+
+              s
+              |> State.match_index(s.server_num, Log.last_index(s))
+              |> State.next_index(s.server_num, Log.last_index(s))
+              |> Server.broadcast_append_request()
+
+            true ->
+              s
           end
-
-          if s.role == :LEADER do
-            result = commit_database(s, request)
-            send(clientP, {:CLIENT_REPLY, {cid, result, s.leaderP}})
-            Monitor.send_msg(s, {:CLIENT_REQUEST, s.server_num})
-
-            Debug.message(
-              s,
-              "+crep",
-              {clientP, {:CLIENT_REPLY, {cid, result, s.leaderP}}}
-            )
-          end
-
-          s
 
         {:CRASH} ->
           Debug.info(s, "Process sleeping")
