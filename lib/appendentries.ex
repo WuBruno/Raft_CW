@@ -4,6 +4,41 @@
 defmodule AppendEntries do
   # s = server process state (c.f. this/self)
 
+  defp send_append_request(s, follower) do
+    i = s.next_index[follower]
+
+    entries =
+      if i < Log.last_index(s),
+        do: Log.get_entries(s, (i + 1)..Log.last_index(s)),
+        else: %{}
+
+    prev_log_term = if i > Log.last_index(s), do: 0, else: Log.term_at(s, i)
+
+    payload = {s.curr_term, i, prev_log_term, s.commit_index, entries}
+
+    s
+    |> Server.send(follower, :APPEND_ENTRIES_REQUEST, payload)
+    |> Debug.message("+areq", {follower, :APPEND_ENTRIES_REQUEST, payload})
+    |> Timer.restart_append_entries_timer(follower)
+  end
+
+  defp send_append_reply(s, leader, payload) do
+    s
+    |> Server.send(leader, :APPEND_ENTRIES_REPLY, payload)
+    |> Debug.message("+arep", {leader, :APPEND_ENTRIES_REPLY, payload})
+  end
+
+  def broadcast_append_request(s) do
+    for follower <- 1..s.num_servers,
+        follower != s.server_num,
+        do:
+          s
+          |> send_append_request(follower)
+          |> Timer.restart_append_entries_timer(follower)
+
+    s
+  end
+
   def handle_append_entries_request(
         s,
         leader,
@@ -25,34 +60,15 @@ defmodule AppendEntries do
 
     # Terms between leader and follower should match
     if term == s.curr_term and valid_log do
-      s = AppendEntries.append_entries(s, prev_log_index, commit_index, entries)
+      s = append_log_entries(s, prev_log_index, commit_index, entries)
       match_index = Log.last_index(s)
 
       s
-      |> Server.send(leader, :APPEND_ENTRIES_REPLY, {
-        s.curr_term,
-        match_index,
-        true
-      })
+      |> send_append_reply(leader, {s.curr_term, match_index, true})
       |> State.leaderP(Enum.at(s.servers, leader - 1))
-      |> Timer.restart_election_timer()
-      |> Debug.message("+arep", {
-        leader,
-        :APPEND_ENTRIES_REPLY,
-        {s.curr_term, match_index, true}
-      })
     else
       s
-      |> Server.send(leader, :APPEND_ENTRIES_REPLY, {
-        s.curr_term,
-        0,
-        false
-      })
-      |> Debug.message("+arep", {
-        leader,
-        :APPEND_ENTRIES_REPLY,
-        {s.curr_term, 0, false}
-      })
+      |> send_append_reply(leader, {s.curr_term, 0, false})
     end
   end
 
@@ -72,12 +88,11 @@ defmodule AppendEntries do
             s
             |> State.next_index(follower, match_index)
             |> State.match_index(follower, match_index)
-            |> AppendEntries.leader_commit_log_entries()
+            |> leader_commit_log_entries()
 
           s.next_index[follower] > 0 ->
             s
             |> State.dec_next_index(follower)
-            |> Server.send_append_request(follower)
 
           true ->
             s
@@ -93,23 +108,35 @@ defmodule AppendEntries do
     end
   end
 
-  def leader_commit_log_entries(s) do
+  def handle_append_timeout(s, _payload = {term, follower}),
+    do:
+      if(term == s.curr_term,
+        # Send heartbeat
+        do: s |> send_append_request(follower),
+        else: s
+      )
+
+  defp leader_commit_log_entries(s) do
+    # Get the maximum commit with majority's commit
     max_commit =
       Map.values(s.match_index)
       |> Enum.sort()
       |> Enum.at(s.majority - 1)
 
-    if max_commit > s.commit_index and Log.term_at(s, max_commit) == s.curr_term,
-      do:
-        s
-        # Commit all uncommited to database and reply client
-        |> AppendEntries.leader_commit_logs(s.commit_index + 1, max_commit)
-        |> State.commit_index(max_commit)
-        |> State.match_index(s.server_num, max_commit),
-      else: s
+    Debug.info(s, "Max commit is #{max_commit} #{s.commit_index} #{inspect(s.match_index)}")
+
+    if max_commit > s.commit_index and Log.term_at(s, max_commit) == s.curr_term do
+      s
+      # Commit all uncommited to database and reply client
+      |> leader_commit_logs(s.commit_index + 1, max_commit)
+      |> State.commit_index(max_commit)
+      |> State.match_index(s.server_num, max_commit)
+    else
+      s
+    end
   end
 
-  def leader_commit_logs(s, start_index, end_index) do
+  defp leader_commit_logs(s, start_index, end_index) do
     for i <- start_index..end_index do
       request = Log.request_at(s, i)
       result = Server.commit_database(s, request)
@@ -119,39 +146,37 @@ defmodule AppendEntries do
     s
   end
 
-  def commit_logs_to_database(s, start_index, end_index) do
-    for i <- start_index..end_index do
-      Server.commit_database(s, Log.request_at(s, i))
-    end
-
-    s
-  end
-
-  def append_entries(s, last_log_index, leader_commit_index, entries) do
+  defp append_log_entries(s, last_log_index, leader_commit_index, entries) do
     # Cut stale ahead logs
-    # Add any new entries
     s =
-      if map_size(entries) > 0 and Log.last_index(s) > last_log_index do
-        if Log.term_at(s, last_log_index) != entries[last_log_index + 1].term,
-          do: s |> Log.delete_entries_from(last_log_index),
-          else: s
-      else
-        s
-      end
+      if map_size(entries) > 0 and Log.last_index(s) > last_log_index and
+           Log.term_at(s, last_log_index) != entries[last_log_index + 1].term,
+         do: s |> Log.delete_entries_from(last_log_index),
+         else: s
 
+    # Add any new entries
     s =
       if last_log_index + map_size(entries) > Log.last_index(s),
         do: s |> Log.merge_entries(entries),
         else: s
 
+    # Check if any new requests to commit
     if leader_commit_index > s.commit_index,
       do:
         s
         # Commit newly committed messages to database
-        |> AppendEntries.commit_logs_to_database(s.commit_index + 1, leader_commit_index)
+        |> commit_logs_to_database(s.commit_index + 1, leader_commit_index)
         # Update own commit to the leaders commit index
         |> State.commit_index(leader_commit_index),
       else: s
+  end
+
+  defp commit_logs_to_database(s, start_index, end_index) do
+    for i <- start_index..end_index do
+      Server.commit_database(s, Log.request_at(s, i))
+    end
+
+    s
   end
 end
 

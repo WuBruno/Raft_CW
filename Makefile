@@ -14,6 +14,9 @@ SETUP     = default	# one of default, slower, faster, etc
 # DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
 # DEBUG_OPTIONS = "+vreq -vreq +vrep -vrep +areq -areq -etim"
 # DEBUG_OPTIONS = "!inf +crep +areq"
+# DEBUG_OPTIONS = "!inf +vreq -vreq +vrep -vrep -etim -creq +crep +areq +arep"
+# DEBUG_OPTIONS = "!inf -creq +crep +areq +arep"
+# DEBUG_OPTIONS = "!inf"
 DEBUG_OPTIONS = "none"
 # DEBUG_OPTIONS = "+areq -creq +arep"
 

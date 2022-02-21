@@ -117,9 +117,9 @@ defmodule Client do
   def receive_reply_from_leader(c, cid) do
     receive do
       {:CLIENT_REPLY, {m_cid, :NOT_LEADER, leaderP}} when m_cid == cid ->
-        c
-        |> Client.leaderP(leaderP)
-        |> Client.send_client_request_receive_reply(cid)
+          c
+          |> Client.leaderP(leaderP)
+          |> Client.send_client_request_receive_reply(cid)
 
       {:CLIENT_REPLY, {m_cid, reply, leaderP}} when m_cid == cid ->
         c
@@ -139,6 +139,7 @@ defmodule Client do
     after
       c.config.client_reply_timeout ->
         # leader probably crashed, retry with next server
+
         c
         |> Client.leaderP(nil)
         |> Client.send_client_request_receive_reply(cid)

@@ -42,6 +42,12 @@ defmodule Vote do
     end
   end
 
+  def handle_election_timeout(s, _payload = {curr_term, _election_term}) do
+    unless curr_term < s.curr_term,
+      do: s |> start_election(),
+      else: s
+  end
+
   def handle_vote_reply(s, voter, _payload = {term, vote_granted}) do
     current_role = s.role
     current_term = s.curr_term
@@ -52,14 +58,12 @@ defmodule Vote do
           vote_granted ->
         s
         |> State.add_to_voted_by(voter)
-        |> Vote.verify_won_election()
+        |> verify_won_election()
 
       term > current_term ->
         s
         |> State.curr_term(term)
-        |> State.role(:FOLLOWER)
-        |> State.voted_for(nil)
-        |> Timer.cancel_election_timer()
+        |> Vote.become_follower()
 
       true ->
         s
@@ -67,21 +71,27 @@ defmodule Vote do
   end
 
   def verify_election_status(s, leader, term) do
-    cond do
-      # Server's term outdated, update itself and follow new leader
-      term > s.curr_term ->
-        s
-        |> State.curr_term(term)
-        |> Vote.become_follower(leader)
+    s =
+      cond do
+        # Server's term outdated, update itself and follow new leader
+        term > s.curr_term ->
+          s
+          |> State.curr_term(term)
+          |> Vote.become_follower(leader)
 
-      # Server was competing election but has lost
-      term == s.curr_term and s.role == :CANDIDATE ->
-        s |> Vote.become_follower(leader)
+        # Server was competing election but has lost
+        term == s.curr_term and s.role == :CANDIDATE ->
+          s |> Vote.become_follower(leader)
 
-      # Otherwise do nothing
-      true ->
-        s
-    end
+        # Otherwise do nothing
+        true ->
+          s
+      end
+
+    # Update timer if the leader's is valid
+    if term == s.curr_term,
+      do: s |> Timer.restart_election_timer(),
+      else: s
   end
 
   def become_follower(s),
@@ -89,27 +99,17 @@ defmodule Vote do
       s
       |> State.voted_for(nil)
       |> State.role(:FOLLOWER)
+      |> Timer.restart_election_timer()
+      |> Debug.info("Became follower")
 
   def become_follower(s, new_leader),
     do:
       s
       |> Vote.become_follower()
       |> State.leaderP(Enum.at(s.servers, new_leader - 1))
+      |> Debug.info("My new leader is #{new_leader}")
 
-  def verify_won_election(s) do
-    if State.vote_tally(s) >= s.majority,
-      do:
-        s
-        |> State.role(:LEADER)
-        |> State.leaderP(Enum.at(s.servers, s.server_num - 1))
-        |> State.init_next_index()
-        |> State.init_match_index()
-        |> Timer.cancel_election_timer()
-        |> Server.broadcast_append_request(),
-      else: s
-  end
-
-  def start_election(s) do
+  defp start_election(s) do
     # Update s
     s =
       s
@@ -130,8 +130,21 @@ defmodule Vote do
     s
     |> Server.broadcast(:VOTE_REQUEST, {s.curr_term, last_log_index, last_log_term})
     |> Debug.message("+vreq", {:VOTE_REQUEST, {s.curr_term, last_log_index, last_log_term}})
-    # Start election timer
     |> Timer.restart_election_timer()
+  end
+
+  defp verify_won_election(s) do
+    if State.vote_tally(s) >= s.majority,
+      do:
+        s
+        |> State.role(:LEADER)
+        |> State.leaderP(Enum.at(s.servers, s.server_num - 1))
+        |> State.init_next_index()
+        |> State.init_match_index()
+        |> Timer.cancel_election_timer()
+        |> AppendEntries.broadcast_append_request()
+        |> Debug.info("Became Leader"),
+      else: s
   end
 end
 

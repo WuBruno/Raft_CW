@@ -54,7 +54,7 @@ defmodule Configuration do
       # clients stops sending requests after this time(ms)
       client_timelimit: 60_000,
       # maximum no of requests each client will attempt
-      max_client_requests: 2,
+      max_client_requests: 1_000,
       # interval(ms) between client requests
       client_request_interval: 5,
       # timeout(ms) for the reply to a client request
@@ -68,9 +68,10 @@ defmodule Configuration do
       # server_num => crash_after_time (ms), ..
       crash_servers:
         %{
-          # 3 => 3_000,
+          # 3 => 3_000
           # 4 => 5_000
-        }
+        },
+      leader_crash: 3_000
     }
   end
 
@@ -90,6 +91,14 @@ defmodule Configuration do
   def setup_crash(s) do
     if Map.has_key?(s.config.crash_servers, s.server_num) do
       Process.send_after(self(), {:CRASH}, s.config.crash_servers[s.server_num])
+    end
+
+    s
+  end
+
+  def setup_leader_crash(s) do
+    if s.config.leader_crash do
+      Process.send_after(self(), {:LEADER_CRASH}, s.config.leader_crash)
     end
 
     s
