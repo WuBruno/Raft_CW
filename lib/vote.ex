@@ -1,3 +1,4 @@
+# Bruno Wu (bw1121)
 # coursework, raft consensus, v2
 
 defmodule Vote do

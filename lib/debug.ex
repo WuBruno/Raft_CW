@@ -1,3 +1,4 @@
+# Bruno Wu (bw1121)
 # distributed algorithms, n.dulay, 8 feb jan 2022
 # coursework, raft consensus, v2
 

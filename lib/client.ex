@@ -1,3 +1,4 @@
+# Bruno Wu (bw1121)
 # distributed algorithms, n.dulay, 8 feb 2022
 # coursework, raft consensus, v2
 
@@ -117,9 +118,9 @@ defmodule Client do
   def receive_reply_from_leader(c, cid) do
     receive do
       {:CLIENT_REPLY, {m_cid, :NOT_LEADER, leaderP}} when m_cid == cid ->
-          c
-          |> Client.leaderP(leaderP)
-          |> Client.send_client_request_receive_reply(cid)
+        c
+        |> Client.leaderP(leaderP)
+        |> Client.send_client_request_receive_reply(cid)
 
       {:CLIENT_REPLY, {m_cid, reply, leaderP}} when m_cid == cid ->
         c

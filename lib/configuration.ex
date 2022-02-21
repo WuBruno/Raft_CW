@@ -1,3 +1,4 @@
+# Bruno Wu (bw1121)
 # distributed algorithms, n.dulay, 8 feb 2022
 # raft, configuration parameters v2
 
@@ -54,7 +55,7 @@ defmodule Configuration do
       # clients stops sending requests after this time(ms)
       client_timelimit: 60_000,
       # maximum no of requests each client will attempt
-      max_client_requests: 5_000,
+      max_client_requests: 2_000,
       # interval(ms) between client requests
       client_request_interval: 1,
       # timeout(ms) for the reply to a client request
@@ -72,7 +73,7 @@ defmodule Configuration do
           # 4 => 5_000
         },
       # 2_000
-      leader_crash: nil
+      leader_crash: 2000
     }
   end
 
