@@ -5,20 +5,21 @@ defmodule AppendEntries do
   # s = server process state (c.f. this/self)
 
   defp send_append_request(s, follower) do
-    i = s.next_index[follower]
+    prev_log_index = s.next_index[follower]
 
     entries =
-      if i < Log.last_index(s),
-        do: Log.get_entries(s, (i + 1)..Log.last_index(s)),
+      if prev_log_index < Log.last_index(s),
+        do: Log.get_entries(s, (prev_log_index + 1)..Log.last_index(s)),
         else: %{}
 
-    prev_log_term = if i > Log.last_index(s), do: 0, else: Log.term_at(s, i)
+    prev_log_term =
+      if prev_log_index > Log.last_index(s), do: 0, else: Log.term_at(s, prev_log_index)
 
-    payload = {s.curr_term, i, prev_log_term, s.commit_index, entries}
+    payload = {s.curr_term, prev_log_index, prev_log_term, s.commit_index, entries}
 
     s
     |> Server.send(follower, :APPEND_ENTRIES_REQUEST, payload)
-    |> Debug.message("+areq", {follower, :APPEND_ENTRIES_REQUEST, payload})
+    # |> Debug.message("+areq", {follower, :APPEND_ENTRIES_REQUEST, payload})
     |> Timer.restart_append_entries_timer(follower)
   end
 
@@ -53,10 +54,16 @@ defmodule AppendEntries do
     # Verify election
     s = Vote.verify_election_status(s, leader, term)
 
+    # Debug.info(
+    #   s,
+    #   "#{prev_log_index} #{prev_log_term} #{Log.last_index(s)}"
+    # )
+
     # Index is not too ahead & last log terms match
     valid_log =
-      Log.last_index(s) >= prev_log_index and
-        (prev_log_index == 0 or prev_log_term == Log.term_at(s, prev_log_index))
+      if Log.last_index(s) >= prev_log_index,
+        do: prev_log_index == 0 or prev_log_term == Log.term_at(s, prev_log_index),
+        else: false
 
     # Terms between leader and follower should match
     if term == s.curr_term and valid_log do
@@ -123,7 +130,7 @@ defmodule AppendEntries do
       |> Enum.sort()
       |> Enum.at(s.majority - 1)
 
-    Debug.info(s, "Max commit is #{max_commit} #{s.commit_index} #{inspect(s.match_index)}")
+    # Debug.info(s, "Max commit is #{max_commit} #{s.commit_index} #{inspect(s.match_index)}")
 
     if max_commit > s.commit_index and Log.term_at(s, max_commit) == s.curr_term do
       s
@@ -149,10 +156,13 @@ defmodule AppendEntries do
   defp append_log_entries(s, last_log_index, leader_commit_index, entries) do
     # Cut stale ahead logs
     s =
-      if map_size(entries) > 0 and Log.last_index(s) > last_log_index and
-           Log.term_at(s, last_log_index) != entries[last_log_index + 1].term,
-         do: s |> Log.delete_entries_from(last_log_index),
-         else: s
+      if map_size(entries) > 0 and Log.last_index(s) > last_log_index,
+        do:
+          if(Log.term_at(s, last_log_index) != entries[last_log_index + 1].term,
+            do: s |> Log.delete_entries_from(last_log_index + 1),
+            else: s
+          ),
+        else: s
 
     # Add any new entries
     s =
@@ -172,6 +182,11 @@ defmodule AppendEntries do
   end
 
   defp commit_logs_to_database(s, start_index, end_index) do
+    # Debug.info(
+    #   s,
+    #   "#{start_index} #{end_index} #{Log.last_index(s)}"
+    # )
+
     for i <- start_index..end_index do
       Server.commit_database(s, Log.request_at(s, i))
     end

@@ -100,14 +100,12 @@ defmodule Vote do
       |> State.voted_for(nil)
       |> State.role(:FOLLOWER)
       |> Timer.restart_election_timer()
-      |> Debug.info("Became follower")
 
   def become_follower(s, new_leader),
     do:
       s
       |> Vote.become_follower()
       |> State.leaderP(Enum.at(s.servers, new_leader - 1))
-      |> Debug.info("My new leader is #{new_leader}")
 
   defp start_election(s) do
     # Update s

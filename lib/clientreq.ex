@@ -28,7 +28,9 @@ defmodule ClientReq do
             s |> Log.append_entry(%{term: s.curr_term, request: payload})
           else
             send(clientP, {:CLIENT_REPLY, {cid, :OK, s.leaderP}})
-            s |> Debug.message(
+
+            s
+            |> Debug.message(
               "+crep",
               {clientP, {:CLIENT_REPLY, {cid, :OK, s.leaderP}}}
             )
@@ -36,7 +38,7 @@ defmodule ClientReq do
 
         s
         |> State.match_index(s.server_num, Log.last_index(s))
-        |> State.next_index(s.server_num, Log.last_index(s))
+        # |> State.next_index(s.server_num, Log.last_index(s))
         |> AppendEntries.broadcast_append_request()
 
       true ->

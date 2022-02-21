@@ -90,15 +90,15 @@ defmodule Server do
 
         {:CRASH} ->
           s |> Debug.info("Process sleeping")
-          Process.exit(self(), "Necessary exit")
-          # Process.sleep(1000)
+          # Process.exit(self(), "Necessary exit")
+          Process.sleep(1000)
           s |> Debug.info(s, "Process woke up")
 
         {:LEADER_CRASH} ->
           if s.role == :LEADER do
-            s |> Debug.info("Leader crashing")
-            Process.exit(self(), "Necessary exit")
-            # Process.sleep(1000)
+            s |> Debug.info("Leader sleeping")
+            # Process.exit(self(), "Necessary exit")
+            Process.sleep(1000)
             s |> Debug.info(s, "Process woke up")
           else
             s

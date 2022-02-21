@@ -4,9 +4,9 @@
 # Makefile, v1
 
 SERVERS   = 5      	
-CLIENTS   = 1      	
+CLIENTS   = 5      	
 
-TIMELIMIT = 15000	# quits after milli-seconds(ms)
+TIMELIMIT = 10000	# quits after milli-seconds(ms)
 SETUP     = default	# one of default, slower, faster, etc
 
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
@@ -15,9 +15,9 @@ SETUP     = default	# one of default, slower, faster, etc
 # DEBUG_OPTIONS = "+vreq -vreq +vrep -vrep +areq -areq -etim"
 # DEBUG_OPTIONS = "!inf +crep +areq"
 # DEBUG_OPTIONS = "!inf +vreq -vreq +vrep -vrep -etim -creq +crep +areq +arep"
-# DEBUG_OPTIONS = "!inf -creq +crep +areq +arep"
-# DEBUG_OPTIONS = "!inf"
-DEBUG_OPTIONS = "none"
+# DEBUG_OPTIONS = "!inf -creq +crep +arep -areq"
+DEBUG_OPTIONS = "!inf"
+# DEBUG_OPTIONS = "none"
 # DEBUG_OPTIONS = "+areq -creq +arep"
 
 DEBUG_LEVEL   = 3
