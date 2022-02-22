@@ -26,6 +26,14 @@ defmodule Monitor do
   def updates(m, i, v), do: Map.put(m, :updates, Map.put(m.updates, i, v))
   def moves(m, v), do: Map.put(m, :moves, v)
 
+  def inc_failed_sends(m, i),
+    do:
+      Map.put(
+        m,
+        :failed_sends,
+        Map.update(m.failed_sends, i, 1, fn v -> v + 1 end)
+      )
+
   # _________________________________________________________ Monitor.start()
   def start(config) do
     m = %{
@@ -33,7 +41,8 @@ defmodule Monitor do
       clock: 0,
       requests: Map.new(),
       updates: Map.new(),
-      moves: Map.new()
+      moves: Map.new(),
+      failed_sends: Map.new()
     }
 
     Process.send_after(self(), {:PRINT}, m.config.monitor_interval)
@@ -86,6 +95,11 @@ defmodule Monitor do
         |> Monitor.requests(server_num, value + 1)
         |> Monitor.next()
 
+      {:SEND_FAILED, server_num} ->
+        m
+        |> Monitor.inc_failed_sends(server_num)
+        |> Monitor.next()
+
       {:PRINT, term, msg} ->
         IO.puts("  Monitor term = #{term} #{msg}")
         m |> Monitor.next()
@@ -99,6 +113,11 @@ defmodule Monitor do
         IO.puts("  time = #{clock} client requests seen = #{inspect(sorted)}")
         sorted = m.updates |> Map.to_list() |> List.keysort(0)
         IO.puts("  time = #{clock}      db updates done = #{inspect(sorted)}")
+
+        if m.config.send_reliability < 100 do
+          sorted = m.failed_sends |> Map.to_list() |> List.keysort(0)
+          IO.puts("  time = #{clock}      failed sends = #{inspect(sorted)}")
+        end
 
         IO.puts("")
         Process.send_after(self(), {:PRINT}, m.config.monitor_interval)

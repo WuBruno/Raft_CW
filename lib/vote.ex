@@ -32,13 +32,13 @@ defmodule Vote do
       |> State.curr_term(c_term)
       |> State.role(:FOLLOWER)
       |> State.voted_for(candidate)
-      |> Server.send(candidate, :VOTE_REPLY, {c_term, true})
+      |> Server.send_server(candidate, :VOTE_REPLY, {c_term, true})
       |> Debug.message("+vrep", {candidate, c_term, true})
       |> Timer.restart_election_timer()
     else
       # Reject vote
       s
-      |> Server.send(candidate, :VOTE_REPLY, {current_term, false})
+      |> Server.send_server(candidate, :VOTE_REPLY, {current_term, false})
       |> Debug.message("+vrep", {candidate, current_term, false})
     end
   end

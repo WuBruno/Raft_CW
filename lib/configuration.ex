@@ -74,7 +74,8 @@ defmodule Configuration do
       sleep_servers: %{},
       # the leader at these certain times will sleep
       sleep_leader: [],
-      sleep_time: 1000
+      sleep_time: 1000,
+      send_reliability: 100
     }
   end
 
@@ -84,13 +85,6 @@ defmodule Configuration do
 
   # _________________________________________________________ params :slower ()
   # settingsto slow timing
-  def params(:slower) do
-    Map.merge(
-      params(:default),
-      %{}
-    )
-  end
-
   def params(:single_crash) do
     Map.merge(
       params(:default),
@@ -128,6 +122,104 @@ defmodule Configuration do
       params(:default),
       %{
         crash_leader: [3_000, 5_000]
+      }
+    )
+  end
+
+  def params(:single_sleep) do
+    Map.merge(
+      params(:default),
+      %{
+        sleep_servers: %{
+          1 => 3_000
+        }
+      }
+    )
+  end
+
+  def params(:majority_sleep) do
+    Map.merge(
+      params(:default),
+      %{
+        sleep_servers: %{
+          1 => 3_000,
+          2 => 3_500
+        }
+      }
+    )
+  end
+
+  def params(:leader_sleep) do
+    Map.merge(
+      params(:default),
+      %{
+        sleep_leader: [3_000]
+      }
+    )
+  end
+
+  def params(:multi_leader_sleep) do
+    Map.merge(
+      params(:default),
+      %{
+        sleep_leader: [3_000, 5_000, 7_000]
+      }
+    )
+  end
+
+  def params(:high_load) do
+    Map.merge(
+      params(:default),
+      %{
+        client_request_interval: 1,
+        max_client_requests: 3_000
+      }
+    )
+  end
+
+  def params(:high_load_leader_sleep) do
+    Map.merge(
+      params(:high_load),
+      %{
+        sleep_leader: [5_000]
+      }
+    )
+  end
+
+  def params(:unreliable_send) do
+    Map.merge(
+      params(:default),
+      %{
+        send_reliability: 90
+      }
+    )
+  end
+
+  def params(:very_unreliable_send) do
+    Map.merge(
+      params(:default),
+      %{
+        send_reliability: 50,
+        max_client_requests: 100
+      }
+    )
+  end
+
+  def params(:unreliable_send_multi_leader_sleep) do
+    Map.merge(
+      params(:unreliable_send),
+      %{
+        sleep_leader: [3000, 5000, 7000]
+      }
+    )
+  end
+
+  def params(:high_load_unreliable_send_multi_leader_sleep) do
+    Map.merge(
+      params(:unreliable_send_multi_leader_sleep),
+      %{
+        sleep_leader: [3000, 5000, 7000],
+        client_request_interval: 1
       }
     )
   end

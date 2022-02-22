@@ -7,7 +7,7 @@ SERVERS   = 5
 CLIENTS   = 5      	
 
 TIMELIMIT = 15000	# quits after milli-seconds(ms)
-SETUP     = multi_leader_crash	# one of default, slower, faster, etc
+SETUP     = very_unreliable_send	# one of default, slower, faster, etc
 
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
 # Prefixes + for send/send_after,  - for receive

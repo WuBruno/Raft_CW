@@ -1,0 +1,150 @@
+mix compile
+Compiling 1 file (.ex)
+-------------------------------------------------------------------
+server3-0001 role=LEADER    term=001 !inf "Became Leader"
+  time = 500 client requests seen = [{3, 208}]
+  time = 500      db updates done = [{1, 208}, {2, 208}, {3, 208}, {4, 208}, {5, 208}]
+  time = 500      failed sends = [{1, 43}, {2, 44}, {3, 202}, {4, 39}, {5, 35}]
+
+  time = 1000 client requests seen = [{3, 534}]
+  time = 1000      db updates done = [{1, 534}, {2, 534}, {3, 534}, {4, 534}, {5, 534}]
+  time = 1000      failed sends = [{1, 116}, {2, 115}, {3, 504}, {4, 93}, {5, 101}]
+
+  time = 1500 client requests seen = [{3, 861}]
+  time = 1500      db updates done = [{1, 860}, {2, 860}, {3, 861}, {4, 860}, {5, 860}]
+  time = 1500      failed sends = [{1, 169}, {2, 188}, {3, 841}, {4, 159}, {5, 174}]
+
+  time = 2000 client requests seen = [{3, 1205}]
+  time = 2000      db updates done = [{1, 1204}, {2, 1204}, {3, 1205}, {4, 1204}, {5, 1204}]
+  time = 2000      failed sends = [{1, 236}, {2, 256}, {3, 1187}, {4, 232}, {5, 242}]
+
+  time = 2500 client requests seen = [{3, 1533}]
+  time = 2500      db updates done = [{1, 1532}, {2, 1532}, {3, 1533}, {4, 1532}, {5, 1532}]
+  time = 2500      failed sends = [{1, 300}, {2, 330}, {3, 1521}, {4, 297}, {5, 327}]
+
+  time = 3000 client requests seen = [{3, 1839}]
+  time = 3000      db updates done = [{1, 1838}, {2, 1838}, {3, 1839}, {4, 1838}, {5, 1838}]
+  time = 3000      failed sends = [{1, 345}, {2, 402}, {3, 1804}, {4, 355}, {5, 392}]
+
+server3-0002 role=LEADER    term=001 !inf "Leader sleeping"
+server1-0001 role=LEADER    term=002 !inf "Became Leader"
+  time = 3500 client requests seen = [{1, 188}, {3, 1861}]
+  time = 3500      db updates done = [{1, 2048}, {2, 2047}, {3, 1861}, {4, 2048}, {5, 2048}]
+  time = 3500      failed sends = [{1, 535}, {2, 448}, {3, 1818}, {4, 401}, {5, 434}]
+
+  time = 4000 client requests seen = [{1, 477}, {3, 1861}]
+  time = 4000      db updates done = [{1, 2337}, {2, 2337}, {3, 1861}, {4, 2337}, {5, 2337}]
+  time = 4000      failed sends = [{1, 794}, {2, 520}, {3, 1818}, {4, 466}, {5, 501}]
+
+  time = 4500 client requests seen = [{1, 776}, {3, 1861}]
+  time = 4500      db updates done = [{1, 2636}, {2, 2636}, {3, 2636}, {4, 2636}, {5, 2636}]
+  time = 4500      failed sends = [{1, 1096}, {2, 576}, {3, 1981}, {4, 524}, {5, 562}]
+
+  time = 5000 client requests seen = [{1, 1104}, {3, 1861}]
+  time = 5000      db updates done = [{1, 2964}, {2, 2963}, {3, 2964}, {4, 2964}, {5, 2964}]
+  time = 5000      failed sends = [{1, 1408}, {2, 633}, {3, 2049}, {4, 571}, {5, 620}]
+
+server1-0002 role=LEADER    term=002 !inf "Leader sleeping"
+server5-0001 role=LEADER    term=004 !inf "Became Leader"
+  time = 5500 client requests seen = [{1, 1117}, {3, 1861}, {5, 113}]
+  time = 5500      db updates done = [{1, 2977}, {2, 3090}, {3, 3090}, {4, 3090}, {5, 3090}]
+  time = 5500      failed sends = [{1, 1430}, {2, 658}, {3, 2077}, {4, 601}, {5, 722}]
+
+  time = 6000 client requests seen = [{1, 1117}, {3, 1861}, {5, 349}]
+  time = 6000      db updates done = [{1, 2977}, {2, 3325}, {3, 3325}, {4, 3325}, {5, 3326}]
+  time = 6000      failed sends = [{1, 1430}, {2, 712}, {3, 2128}, {4, 661}, {5, 952}]
+
+  time = 6500 client requests seen = [{1, 1117}, {3, 1861}, {5, 594}]
+  time = 6500      db updates done = [{1, 3571}, {2, 3571}, {3, 3571}, {4, 3571}, {5, 3571}]
+  time = 6500      failed sends = [{1, 1561}, {2, 751}, {3, 2189}, {4, 713}, {5, 1235}]
+
+  time = 7000 client requests seen = [{1, 1117}, {3, 1861}, {5, 888}]
+  time = 7000      db updates done = [{1, 3864}, {2, 3864}, {3, 3864}, {4, 3864}, {5, 3865}]
+  time = 7000      failed sends = [{1, 1628}, {2, 806}, {3, 2250}, {4, 773}, {5, 1505}]
+
+server5-0002 role=LEADER    term=004 !inf "Leader sleeping"
+server1-0002 role=LEADER    term=005 !inf "Became Leader"
+  time = 7500 client requests seen = [{1, 1337}, {3, 1861}, {5, 917}]
+  time = 7500      db updates done = [{1, 4113}, {2, 4112}, {3, 4112}, {4, 4112}, {5, 3894}]
+  time = 7500      failed sends = [{1, 1843}, {2, 847}, {3, 2304}, {4, 832}, {5, 1536}]
+
+  time = 8000 client requests seen = [{1, 1596}, {3, 1861}, {5, 917}]
+  time = 8000      db updates done = [{1, 4372}, {2, 4372}, {3, 4372}, {4, 4372}, {5, 3894}]
+  time = 8000      failed sends = [{1, 2091}, {2, 898}, {3, 2356}, {4, 877}, {5, 1536}]
+
+  time = 8500 client requests seen = [{1, 1775}, {3, 1861}, {5, 917}]
+  time = 8500      db updates done = [{1, 4551}, {2, 4551}, {3, 4551}, {4, 4551}, {5, 4551}]
+  time = 8500      failed sends = [{1, 2313}, {2, 941}, {3, 2398}, {4, 916}, {5, 1684}]
+
+Node client5_30_brunowu@127.0.0.1 Going to Sleep - Client 5 all requests completed = 1000
+  time = 9000 client requests seen = [{1, 2074}, {3, 1861}, {5, 917}]
+  time = 9000      db updates done = [{1, 4850}, {2, 4849}, {3, 4849}, {4, 4849}, {5, 4849}]
+  time = 9000      failed sends = [{1, 2595}, {2, 1013}, {3, 2454}, {4, 981}, {5, 1724}]
+
+Node client3_30_brunowu@127.0.0.1 Going to Sleep - Client 3 all requests completed = 1000
+Node client2_30_brunowu@127.0.0.1 Going to Sleep - Client 2 all requests completed = 1000
+Node client1_30_brunowu@127.0.0.1 Going to Sleep - Client 1 all requests completed = 1000
+  time = 9500 client requests seen = [{1, 2180}, {3, 1861}, {5, 917}]
+  time = 9500      db updates done = [{1, 4956}, {2, 4956}, {3, 4956}, {4, 4956}, {5, 4956}]
+  time = 9500      failed sends = [{1, 2731}, {2, 1044}, {3, 2473}, {4, 1010}, {5, 1747}]
+
+Node client4_30_brunowu@127.0.0.1 Going to Sleep - Client 4 all requests completed = 1000
+  time = 10000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 10000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 10000      failed sends = [{1, 2791}, {2, 1053}, {3, 2484}, {4, 1021}, {5, 1762}]
+
+  time = 10500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 10500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 10500      failed sends = [{1, 2813}, {2, 1055}, {3, 2486}, {4, 1024}, {5, 1768}]
+
+  time = 11000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 11000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 11000      failed sends = [{1, 2831}, {2, 1059}, {3, 2494}, {4, 1032}, {5, 1771}]
+
+  time = 11500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 11500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 11500      failed sends = [{1, 2848}, {2, 1066}, {3, 2498}, {4, 1034}, {5, 1776}]
+
+  time = 12000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 12000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 12000      failed sends = [{1, 2863}, {2, 1073}, {3, 2505}, {4, 1036}, {5, 1785}]
+
+  time = 12500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 12500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 12500      failed sends = [{1, 2888}, {2, 1076}, {3, 2513}, {4, 1038}, {5, 1788}]
+
+  time = 13000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 13000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 13000      failed sends = [{1, 2905}, {2, 1082}, {3, 2515}, {4, 1042}, {5, 1792}]
+
+  time = 13500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 13500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 13500      failed sends = [{1, 2917}, {2, 1088}, {3, 2521}, {4, 1050}, {5, 1797}]
+
+  time = 14000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 14000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 14000      failed sends = [{1, 2943}, {2, 1092}, {3, 2524}, {4, 1056}, {5, 1799}]
+
+  Node client1_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server2_30_brunowu@127.0.0.1 exiting - maxtime reached
+  time = 14500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 14500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 14500      failed sends = [{1, 2963}, {2, 1095}, {3, 2527}, {4, 1060}, {5, 1804}]
+
+  Node server5_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server1_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server4_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client2_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client4_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client5_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server3_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client3_30_brunowu@127.0.0.1 exiting - maxtime reached
+  Node raft_30_brunowu@127.0.0.1 exiting - maxtime reached
+  time = 15000 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 15000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 15000      failed sends = [{1, 2979}, {2, 1101}, {3, 2532}, {4, 1064}, {5, 1808}]
+
+  time = 15500 client requests seen = [{1, 2224}, {3, 1861}, {5, 917}]
+  time = 15500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+  time = 15500      failed sends = [{1, 2993}, {2, 1103}, {3, 2540}, {4, 1068}, {5, 1811}]
+

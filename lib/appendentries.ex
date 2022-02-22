@@ -19,14 +19,14 @@ defmodule AppendEntries do
     payload = {s.curr_term, prev_log_index, prev_log_term, s.commit_index, entries}
 
     s
-    |> Server.send(follower, :APPEND_ENTRIES_REQUEST, payload)
+    |> Server.send_server(follower, :APPEND_ENTRIES_REQUEST, payload)
     # |> Debug.message("+areq", {follower, :APPEND_ENTRIES_REQUEST, payload})
     |> Timer.restart_append_entries_timer(follower)
   end
 
   defp send_append_reply(s, leader, payload) do
     s
-    |> Server.send(leader, :APPEND_ENTRIES_REPLY, payload)
+    |> Server.send_server(leader, :APPEND_ENTRIES_REPLY, payload)
     |> Debug.message("+arep", {leader, :APPEND_ENTRIES_REPLY, payload})
   end
 

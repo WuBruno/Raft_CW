@@ -61,6 +61,8 @@ defmodule Helper do
   end
 
   # node_sleep
+
+  def random(n), do: Enum.random(1..n)
 end
 
 # Helper

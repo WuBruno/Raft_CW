@@ -28,15 +28,31 @@ defmodule Server do
 
   # start
 
-  def send(s, target, type, payload) do
-    send(Enum.at(s.servers, target - 1), {type, s.server_num, payload})
+  defp unreliable_send(s, dest, payload) do
+    if Helper.random(100) <= s.config.send_reliability,
+      do: send(dest, payload),
+      else: Monitor.send_msg(s, {:SEND_FAILED, s.server_num})
+
+    s
+  end
+
+  def send(s, targetP, payload) do
+    if s.config.send_reliability < 100,
+      do: unreliable_send(s, targetP, payload),
+      else: send(targetP, payload)
+
+    s
+  end
+
+  def send_server(s, target, type, payload) do
+    s |> Server.send(Enum.at(s.servers, target - 1), {type, s.server_num, payload})
     s
   end
 
   def broadcast(s, type, payload) do
     for i <- 1..s.num_servers,
         i != s.server_num,
-        do: Server.send(s, i, type, payload)
+        do: Server.send_server(s, i, type, payload)
 
     s
   end
