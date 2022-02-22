@@ -55,9 +55,9 @@ defmodule Configuration do
       # clients stops sending requests after this time(ms)
       client_timelimit: 60_000,
       # maximum no of requests each client will attempt
-      max_client_requests: 2_000,
+      max_client_requests: 1_000,
       # interval(ms) between client requests
-      client_request_interval: 1,
+      client_request_interval: 5,
       # timeout(ms) for the reply to a client request
       client_reply_timeout: 50,
       # timeout(ms) for election, set randomly in range
@@ -67,13 +67,14 @@ defmodule Configuration do
       # interval(ms) between monitor summaries
       monitor_interval: 500,
       # server_num => crash_after_time (ms), ..
-      crash_servers:
-        %{
-          # 3 => 3_000
-          # 4 => 5_000
-        },
-      # 2_000
-      leader_crash: 2000
+      crash_servers: %{},
+      # the leader at these certain times will crash
+      crash_leader: [],
+      # the following servers will sleep at the specified times
+      sleep_servers: %{},
+      # the leader at these certain times will sleep
+      sleep_leader: [],
+      sleep_time: 1000
     }
   end
 
@@ -90,23 +91,80 @@ defmodule Configuration do
     )
   end
 
-  def setup_crash(s) do
+  def params(:single_crash) do
+    Map.merge(
+      params(:default),
+      %{
+        crash_servers: %{
+          1 => 3_000
+        }
+      }
+    )
+  end
+
+  def params(:max_crash) do
+    Map.merge(
+      params(:default),
+      %{
+        crash_servers: %{
+          1 => 3_000,
+          2 => 3_000
+        }
+      }
+    )
+  end
+
+  def params(:leader_crash) do
+    Map.merge(
+      params(:default),
+      %{
+        crash_leader: [3_000]
+      }
+    )
+  end
+
+  def params(:multi_leader_crash) do
+    Map.merge(
+      params(:default),
+      %{
+        crash_leader: [3_000, 5_000]
+      }
+    )
+  end
+
+  # params :slower
+
+  def setup_server_crash(s) do
     if Map.has_key?(s.config.crash_servers, s.server_num) do
-      Process.send_after(self(), {:CRASH}, s.config.crash_servers[s.server_num])
+      Process.send_after(self(), {:SERVER_CRASH}, s.config.crash_servers[s.server_num])
     end
 
     s
   end
 
   def setup_leader_crash(s) do
-    if s.config.leader_crash do
-      Process.send_after(self(), {:LEADER_CRASH}, s.config.leader_crash)
+    for time <- s.config.crash_leader do
+      Process.send_after(self(), {:LEADER_CRASH}, time)
     end
 
     s
   end
 
-  # params :slower
+  def setup_server_sleep(s) do
+    if Map.has_key?(s.config.sleep_servers, s.server_num) do
+      Process.send_after(self(), {:SERVER_SLEEP}, s.config.sleep_servers[s.server_num])
+    end
+
+    s
+  end
+
+  def setup_leader_sleep(s) do
+    for time <- s.config.sleep_leader do
+      Process.send_after(self(), {:LEADER_SLEEP}, time)
+    end
+
+    s
+  end
 end
 
 # Configuration

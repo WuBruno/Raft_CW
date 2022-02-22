@@ -6,19 +6,16 @@
 SERVERS   = 5      	
 CLIENTS   = 5      	
 
-TIMELIMIT = 10000	# quits after milli-seconds(ms)
-SETUP     = default	# one of default, slower, faster, etc
+TIMELIMIT = 15000	# quits after milli-seconds(ms)
+SETUP     = multi_leader_crash	# one of default, slower, faster, etc
 
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
 # Prefixes + for send/send_after,  - for receive
-# DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
-DEBUG_OPTIONS = "!inf +vreq +vrep -etim"
-# DEBUG_OPTIONS = "!inf +crep +areq"
-# DEBUG_OPTIONS = "!inf +vreq -vreq +vrep -vrep -etim -creq +crep +areq +arep"
-# DEBUG_OPTIONS = "!inf -creq +crep +arep -areq"
-# DEBUG_OPTIONS = "!inf"
+# DEBUG_OPTIONS = "!inf +areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -drep -creq -crep" # All Options Implemented
+# DEBUG_OPTIONS = "!inf +vreq +vrep -etim" # Debug Elections election
+# DEBUG_OPTIONS = "!inf -creq +crep +arep -areq" # Debug Client Requests
+DEBUG_OPTIONS = "!inf" # Info Only
 # DEBUG_OPTIONS = "none"
-# DEBUG_OPTIONS = "+areq -creq +arep"
 
 DEBUG_LEVEL   = 3
 

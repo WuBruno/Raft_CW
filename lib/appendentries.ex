@@ -55,11 +55,6 @@ defmodule AppendEntries do
     # Verify election
     s = Vote.verify_election_status(s, leader, term)
 
-    # Debug.info(
-    #   s,
-    #   "#{prev_log_index} #{prev_log_term} #{Log.last_index(s)}"
-    # )
-
     # Index is not too ahead & last log terms match
     valid_log =
       if Log.last_index(s) >= prev_log_index,
@@ -131,8 +126,6 @@ defmodule AppendEntries do
       |> Enum.sort()
       |> Enum.at(s.majority - 1)
 
-    # Debug.info(s, "Max commit is #{max_commit} #{s.commit_index} #{inspect(s.match_index)}")
-
     if max_commit > s.commit_index and Log.term_at(s, max_commit) == s.curr_term do
       s
       # Commit all uncommited to database and reply client
@@ -183,11 +176,6 @@ defmodule AppendEntries do
   end
 
   defp commit_logs_to_database(s, start_index, end_index) do
-    # Debug.info(
-    #   s,
-    #   "#{start_index} #{end_index} #{Log.last_index(s)}"
-    # )
-
     for i <- start_index..end_index do
       Server.commit_database(s, Log.request_at(s, i))
     end

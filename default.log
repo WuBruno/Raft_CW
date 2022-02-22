@@ -1,0 +1,84 @@
+mix compile
+Compiling 1 file (.ex)
+-------------------------------------------------------------------
+server1-0001 role=LEADER    term=001 !inf "Became Leader"
+  time = 500 client requests seen = [{1, 226}]
+  time = 500      db updates done = [{1, 226}, {2, 226}, {3, 226}, {4, 226}, {5, 226}]
+
+  time = 1000 client requests seen = [{1, 645}]
+  time = 1000      db updates done = [{1, 645}, {2, 645}, {3, 645}, {4, 645}, {5, 645}]
+
+  time = 1500 client requests seen = [{1, 1062}]
+  time = 1500      db updates done = [{1, 1062}, {2, 1062}, {3, 1062}, {4, 1062}, {5, 1062}]
+
+  time = 2000 client requests seen = [{1, 1480}]
+  time = 2000      db updates done = [{1, 1480}, {2, 1480}, {3, 1479}, {4, 1480}, {5, 1480}]
+
+  time = 2500 client requests seen = [{1, 1897}]
+  time = 2500      db updates done = [{1, 1897}, {2, 1897}, {3, 1896}, {4, 1896}, {5, 1896}]
+
+  time = 3000 client requests seen = [{1, 2312}]
+  time = 3000      db updates done = [{1, 2312}, {2, 2311}, {3, 2311}, {4, 2311}, {5, 2311}]
+
+  time = 3500 client requests seen = [{1, 2729}]
+  time = 3500      db updates done = [{1, 2729}, {2, 2728}, {3, 2728}, {4, 2728}, {5, 2728}]
+
+  time = 4000 client requests seen = [{1, 3128}]
+  time = 4000      db updates done = [{1, 3128}, {2, 3128}, {3, 3128}, {4, 3128}, {5, 3128}]
+
+  time = 4500 client requests seen = [{1, 3543}]
+  time = 4500      db updates done = [{1, 3543}, {2, 3542}, {3, 3542}, {4, 3542}, {5, 3542}]
+
+  time = 5000 client requests seen = [{1, 3935}]
+  time = 5000      db updates done = [{1, 3935}, {2, 3933}, {3, 3933}, {4, 3933}, {5, 3933}]
+
+  time = 5500 client requests seen = [{1, 4348}]
+  time = 5500      db updates done = [{1, 4348}, {2, 4347}, {3, 4347}, {4, 4347}, {5, 4347}]
+
+  time = 6000 client requests seen = [{1, 4755}]
+  time = 6000      db updates done = [{1, 4755}, {2, 4755}, {3, 4755}, {4, 4755}, {5, 4755}]
+
+Node client1_34_brunowu@127.0.0.1 Going to Sleep - Client 1 all requests completed = 1000
+Node client5_34_brunowu@127.0.0.1 Going to Sleep - Client 5 all requests completed = 1000
+Node client2_34_brunowu@127.0.0.1 Going to Sleep - Client 2 all requests completed = 1000
+Node client4_34_brunowu@127.0.0.1 Going to Sleep - Client 4 all requests completed = 1000
+Node client3_34_brunowu@127.0.0.1 Going to Sleep - Client 3 all requests completed = 1000
+  time = 6500 client requests seen = [{1, 5000}]
+  time = 6500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 7000 client requests seen = [{1, 5000}]
+  time = 7000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 7500 client requests seen = [{1, 5000}]
+  time = 7500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 8000 client requests seen = [{1, 5000}]
+  time = 8000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 8500 client requests seen = [{1, 5000}]
+  time = 8500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 9000 client requests seen = [{1, 5000}]
+  time = 9000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  Node client2_34_brunowu@127.0.0.1 exiting - maxtime reached
+  time = 9500 client requests seen = [{1, 5000}]
+  time = 9500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  Node server1_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client3_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client4_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server3_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client1_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server4_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node client5_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server5_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node server2_34_brunowu@127.0.0.1 exiting - maxtime reached
+  Node raft_34_brunowu@127.0.0.1 exiting - maxtime reached
+  time = 10000 client requests seen = [{1, 5000}]
+  time = 10000      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+  time = 10500 client requests seen = [{1, 5000}]
+  time = 10500      db updates done = [{1, 5000}, {2, 5000}, {3, 5000}, {4, 5000}, {5, 5000}]
+
+server5-0001 role=LEADER    term=002 !inf "Became Leader"

@@ -16,8 +16,6 @@ defmodule ClientReq do
           {clientP, {:CLIENT_REPLY, {cid, :NOT_LEADER, s.leaderP}}}
         )
 
-      # |> Debug.info("Our new leader is #{inspect(s.leaderP)} #{inspect(s.servers)}")
-
       s.role == :LEADER ->
         # Only append if it is a new request
         repeated =

@@ -16,8 +16,10 @@ defmodule Server do
       {:BIND, servers, databaseP} ->
         State.initialise(config, server_num, servers, databaseP)
         |> Timer.restart_election_timer()
-        |> Configuration.setup_crash()
+        |> Configuration.setup_server_crash()
         |> Configuration.setup_leader_crash()
+        |> Configuration.setup_server_sleep()
+        |> Configuration.setup_leader_sleep()
         |> Server.next()
     end
 
@@ -43,9 +45,9 @@ defmodule Server do
     send(s.databaseP, {:DB_REQUEST, client_request})
     Debug.message(s, "+dreq", {:DB_REQUEST, client_request})
 
-    # Return reply
     receive do
-      {:DB_REPLY, db_result} ->
+      {:DB_REPLY, db_result} = m ->
+        Debug.message(s, "-drep", m)
         db_result
     end
   end
@@ -89,21 +91,33 @@ defmodule Server do
           |> Debug.message("-creq", m)
           |> ClientReq.handle_client_request(payload)
 
-        {:CRASH} ->
-          s |> Debug.info("Process sleeping")
-          # Process.exit(self(), "Necessary exit")
-          Process.sleep(1000)
-          s |> Debug.info(s, "Process woke up")
+        {:SERVER_CRASH} ->
+          Debug.info(s, "Server Crashed")
+          Process.exit(self(), "Crash Exit")
+
+          s
 
         {:LEADER_CRASH} ->
           if s.role == :LEADER do
-            s |> Debug.info("Leader sleeping")
-            # Process.exit(self(), "Necessary exit")
-            Process.sleep(1000)
-            s |> Debug.info(s, "Process woke up")
-          else
-            s
+            Debug.info(s, "Leader Crashed")
+            Process.exit(self(), "Crash Exit")
           end
+
+          s
+
+        {:SERVER_SLEEP} ->
+          Debug.info(s, "Process sleeping")
+          Process.sleep(s.config.sleep_time)
+
+          s
+
+        {:LEADER_SLEEP} ->
+          if s.role == :LEADER do
+            Debug.info(s, "Leader sleeping")
+            Process.sleep(s.config.sleep_time)
+          end
+
+          s
 
         unexpected ->
           s |> Debug.info("Unexpected request received #{inspect(unexpected)}")
