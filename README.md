@@ -1,6 +1,6 @@
-# RaftCw
+# 60009 Distributed Algorithms: Raft Coursework
 
-**TODO: Add description**
+Author: Bruno Wu (bw1121)
 
 ## Installation
 
@@ -19,3 +19,10 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/raft_cw>.
 
+## Testing
+
+Run `make run` to run the system.
+
+Comment and uncomment `SETUP` to pick the type of environment to test. `DEBUG_OPTIONS` can also also support many different messages to be released when debugged.
+
+The `logs` directory contains all the logs from testing in the report.

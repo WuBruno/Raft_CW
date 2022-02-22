@@ -1,4 +1,4 @@
-
+# Bruno Wu (bw1121)
 # distributed algorithms, n.dulay, 10 jan 22 
 # coursework, raft 
 # Makefile, v1
@@ -7,11 +7,24 @@ SERVERS   = 5
 CLIENTS   = 5      	
 
 TIMELIMIT = 15000	# quits after milli-seconds(ms)
-SETUP     = very_unreliable_send	# one of default, slower, faster, etc
+SETUP     = default
+# SETUP     = max_crash
+# SETUP     = leader_crash
+# SETUP     = multi_leader_crash
+# SETUP     = single_sleep
+# SETUP     = majority_sleep
+# SETUP     = leader_sleep
+# SETUP     = multi_leader_sleep
+# SETUP     = high_load
+# SETUP     = high_load_leader_sleep
+# SETUP     = unreliable_send
+# SETUP     = very_unreliable_send
+# SETUP     = unreliable_send_multi_leader_sleep
+# SETUP     = high_load_unreliable_send_multi_leader_sleep
 
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
 # Prefixes + for send/send_after,  - for receive
-# DEBUG_OPTIONS = "!inf +areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -drep -creq -crep" # All Options Implemented
+# DEBUG_OPTIONS = "!inf +areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -drep -creq -crep" # All Options Implemented and Available
 # DEBUG_OPTIONS = "!inf +vreq +vrep -etim" # Debug Elections election
 # DEBUG_OPTIONS = "!inf -creq +crep +arep -areq" # Debug Client Requests
 DEBUG_OPTIONS = "!inf" # Info Only
